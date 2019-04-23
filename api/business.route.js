@@ -2,32 +2,42 @@
 
 const express = require('express');
 const businessRoutes = express.Router();
+const fs = require('fs');
+const AWS = require('aws-sdk');
 
+const s3 = new AWS.S3({
+    accessKeyId: 'AKIAJAZAEPXGFKT5JUQQ',
+    secretAccessKey: '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'
+});
+
+const bucketName = 'productdetailinfo';
+const key = 'productinfo.json';
 // Require Business model in our routes module
 let Business = require('./business.model');
 
 // Defined store route
 businessRoutes.route('/add').post(function (req, res) {
-  let business = new Business(req.body);
-  business.save()
-    .then(business => {
-      res.status(200).json({'business': 'business in added successfully'});
-    })
-    .catch(err => {
-      res.status(400).send("unable to save to database");
-    });
+
 });
 
 // Defined get data(index or listing) route
 businessRoutes.route('/').get(function (req, res) {
-    Business.find(function(err, businesses){
-    if(err){
-      console.log(err);
+  var params = {
+    Bucket: bucketName,
+    Key: key
+}
+s3.getObject(params, (err, data) => {
+    if (err) {
+        console.log("Error details: " , err)
     }
-    else {
-      res.json(businesses);
+    else{
+        console.log('download starting');
+        var productData = JSON.parse(data.Body.toString());
+        res.json(productData);
     }
-  });
+})
+
+
 });
 
 // Defined edit route
