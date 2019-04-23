@@ -6,7 +6,8 @@ export default class Index extends Component {
 
   constructor(props) {
       super(props);
-      this.state = {business: [{
+      this.state = {business:[]};
+      /*this.state = {business: [{
         "productName":"Sony pendrive",
         "productModel":"128GB",
          "productSN":"12345678",
@@ -65,17 +66,18 @@ export default class Index extends Component {
          "rate":"120",
          "tax":"18",
          "amount":"120"
-      }]};
+      }]};*/
     }
-    /*componentDidMount(){
+    
+    componentDidMount(){
       axios.get('http://localhost:4000/business')
         .then(response => {
           this.setState({ business: response.data });
         })
         .catch(function (error) {
-          console.log(error);
+          console.log("Error details: ", error);
         })
-    }*/
+    }
     tabRow(){
       return this.state.business.map(function(object, i){
           return <TableRow obj={object} key={i} />;
@@ -85,7 +87,7 @@ export default class Index extends Component {
     render() {
       return (
         <div>
-          <h3 align="center">Business List</h3>
+          <h3 align="center">Product List</h3>
           <table className="table table-striped" style={{ marginTop: 20 }}>
             <thead>
               <tr>
