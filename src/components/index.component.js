@@ -92,11 +92,10 @@ export default class Index extends Component {
             <thead>
               <tr>
                 <th>Product Name</th>
+                <th>Product Model</th>
                 <th>Product SN</th>
-                <th>Quantity</th>
                 <th>Rate</th>
                 <th>Tax</th>
-                <th>Amount</th>
                 <th colSpan="2">Action</th>
               </tr>
             </thead>

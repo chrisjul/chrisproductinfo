@@ -20,19 +20,16 @@ class TableRow extends Component {
             {this.props.obj.productName}
           </td>
           <td>
-            {this.props.obj.productSN}
+            {this.props.obj.productModel}
           </td>
           <td>
-            {this.props.obj.quantity}
+            {this.props.obj.productSN}
           </td>
           <td>
             {this.props.obj.rate}
           </td>
           <td>
             {this.props.obj.tax}
-          </td>
-          <td>
-            {this.props.obj.amount}
           </td>
           <td>
             <Link to={"/edit/"+this.props.obj._id} className="btn btn-primary">Edit</Link>

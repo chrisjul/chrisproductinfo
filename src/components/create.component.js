@@ -4,47 +4,65 @@ import axios from 'axios';
 export default class Create extends Component {
   constructor(props) {
     super(props);
-    this.onChangePersonName = this.onChangePersonName.bind(this);
-    this.onChangeBusinessName = this.onChangeBusinessName.bind(this);
-    this.onChangeGstNumber = this.onChangeGstNumber.bind(this);
+    this.onChangeProductName = this.onChangeProductName.bind(this);
+    this.onChangeProductModel = this.onChangeProductModel.bind(this);
+    this.onChangeProductSN = this.onChangeProductSN.bind(this);
+    this.onChangeRate = this.onChangeRate.bind(this);
+    this.onChangeTax = this.onChangeTax.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      person_name: '',
-      business_name: '',
-      business_gst_number:''
+      productName: '',
+      productModel: '',
+      productSN: '',
+      rate: '',
+      tax: ''
     }
   }
-  onChangePersonName(e) {
+  onChangeProductName(e) {
     this.setState({
-      person_name: e.target.value
+      productName: e.target.value
     });
   }
-  onChangeBusinessName(e) {
+  onChangeProductModel(e) {
     this.setState({
-      business_name: e.target.value
+      productModel: e.target.value
+    })
+  }
+  onChangeProductSN(e) {
+    this.setState({
+      productSN: e.target.value
     })  
   }
-  onChangeGstNumber(e) {
+  onChangeRate(e) {
     this.setState({
-      business_gst_number: e.target.value
-    })
+      rate: e.target.value
+    });
+  }
+  onChangeTax(e) {
+    this.setState({
+      tax: e.target.value
+    })  
   }
 
   onSubmit(e) {
     e.preventDefault();
     const obj = {
-      person_name: this.state.person_name,
-      business_name: this.state.business_name,
-      business_gst_number: this.state.business_gst_number
+      productName: this.state.productName,
+      productModel: this.state.productModel,
+      productSN: this.state.productSN,
+      rate: this.state.rate,
+      tax: this.state.tax
     };
     axios.post('http://localhost:4000/business/add', obj)
         .then(res => console.log(res.data));
     
     this.setState({
-      person_name: '',
-      business_name: '',
-      business_gst_number: ''
+      productName: '',
+      productModel: '',
+      productSN: '',
+      rate: '',
+      tax: ''
     })
   }
  
@@ -59,7 +77,15 @@ export default class Create extends Component {
                       type="text" 
                       className="form-control" 
                       value={this.state.productName}
-                      onChange={this.onChangePersonName}
+                      onChange={this.onChangeProductName}
+                      />
+                </div>
+                <div className="form-group">
+                    <label>Product Model: </label>
+                    <input type="text" 
+                      className="form-control"
+                      value={this.state.productModel}
+                      onChange={this.onChangeProductModel}
                       />
                 </div>
                 <div className="form-group">
@@ -67,15 +93,7 @@ export default class Create extends Component {
                     <input type="text" 
                       className="form-control"
                       value={this.state.productSN}
-                      onChange={this.onChangeBusinessName}
-                      />
-                </div>
-                <div className="form-group">
-                    <label>Quantity: </label>
-                    <input type="text" 
-                      className="form-control"
-                      value={this.state.quantity}
-                      onChange={this.onChangeGstNumber}
+                      onChange={this.onChangeProductSN}
                       />
                 </div>
                 <div className="form-group">
@@ -84,7 +102,7 @@ export default class Create extends Component {
                       type="text" 
                       className="form-control" 
                       value={this.state.rate}
-                      onChange={this.onChangePersonName}
+                      onChange={this.onChangeRate}
                       />
                 </div>
                 <div className="form-group">
@@ -92,20 +110,12 @@ export default class Create extends Component {
                     <input type="text" 
                       className="form-control"
                       value={this.state.tax}
-                      onChange={this.onChangeBusinessName}
-                      />
-                </div>
-                <div className="form-group">
-                    <label>Amount: </label>
-                    <input type="text" 
-                      className="form-control"
-                      value={this.state.amount}
-                      onChange={this.onChangeGstNumber}
+                      onChange={this.onChangeTax}
                       />
                 </div>
                 <div className="form-group">
                     <input type="submit" 
-                      value="Register Business" 
+                      value="Add Product" 
                       className="btn btn-primary"/>
                 </div>
             </form>
