@@ -6,18 +6,57 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({
-    accessKeyId: 'AKIAJAZAEPXGFKT5JUQQ',
-    secretAccessKey: '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'
+    accessKeyId: 'AKIAIAKGFVIJ2HG3MNJA',
+    secretAccessKey: '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'
 });
 
-const bucketName = 'productdetailinfo';
+const bucketName = 'productdetailsinfo';
 const key = 'productinfo.json';
-// Require Business model in our routes module
-let Business = require('./business.model');
 
 // Defined store route
 businessRoutes.route('/add').post(function (req, res) {
-
+ 
+  var obj = req.body;
+  const params = {
+    Bucket: bucketName,
+    Key: key
+  }
+  s3.headObject(params, function(err, data){
+    if(err){
+      console.log('file not found ');
+    }
+    else{
+      console.log('file found ');
+      s3.getObject(params, (err, data) => {
+        if (err) {
+            console.log(err)
+        }
+        else{
+            console.log('download starting....');
+            var productData = JSON.parse(data.Body.toString());
+            var lastArray = productData.slice(-1)[0];
+            var lastId = lastArray.id;
+            obj.id = lastId + 1;
+            productData.push(obj);
+            const uploadparams = {
+              Bucket: bucketName, // pass your bucket name
+              Key: key, // file will be saved as testBucket/contacts.csv
+              Body: JSON.stringify(productData)
+          };
+          s3.upload(uploadparams, function(s3Err, data) {
+              if (s3Err){
+                  console.log('err ' ,  s3Err);
+              }
+              else{
+                console.log('successfully upload data');
+                res.send(data);
+              }
+              
+          });
+        }
+      })
+    }
+  })
 });
 
 // Defined get data(index or listing) route
