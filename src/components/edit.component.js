@@ -4,15 +4,19 @@ import axios from 'axios';
 export default class Edit extends Component {
   constructor(props) {
     super(props);
-    this.onChangePersonName = this.onChangePersonName.bind(this);
-    this.onChangeBusinessName = this.onChangeBusinessName.bind(this);
-    this.onChangeGstNumber = this.onChangeGstNumber.bind(this);
+    this.onChangeProductName = this.onChangeProductName.bind(this);
+    this.onChangeProductModel = this.onChangeProductModel.bind(this);
+    this.onChangeProductSN = this.onChangeProductSN.bind(this);
+    this.onChangeRate = this.onChangeRate.bind(this);
+    this.onChangeTax = this.onChangeTax.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      person_name: '',
-      business_name: '',
-      business_gst_number:''
+      productName: '',
+      productModel: '',
+      productSN: '',
+      rate: '',
+      tax: ''
     }
   }
 
@@ -20,42 +24,58 @@ export default class Edit extends Component {
       axios.get('http://localhost:4000/business/edit/'+this.props.match.params.id)
           .then(response => {
               this.setState({ 
-                person_name: response.data.person_name, 
-                business_name: response.data.business_name,
-                business_gst_number: response.data.business_gst_number });
+                productName: response.data.productName, 
+                productModel: response.data.productModel,
+                productSN: response.data.productSN,
+                rate: response.data.rate,
+                tax: response.data.tax
+              
+              });
           })
           .catch(function (error) {
               console.log(error);
           })
     }
 
-  onChangePersonName(e) {
+  onChangeProductName(e) {
     this.setState({
-      person_name: e.target.value
+      productName: e.target.value
     });
   }
-  onChangeBusinessName(e) {
+  onChangeProductModel(e) {
     this.setState({
-      business_name: e.target.value
+      productModel: e.target.value
+    })
+  }
+  onChangeProductSN(e) {
+    this.setState({
+      productSN: e.target.value
     })  
   }
-  onChangeGstNumber(e) {
+  onChangeRate(e) {
     this.setState({
-      business_gst_number: e.target.value
-    })
+      rate: e.target.value
+    });
+  }
+  onChangeTax(e) {
+    this.setState({
+      tax: e.target.value
+    })  
   }
 
   onSubmit(e) {
     e.preventDefault();
     const obj = {
-      person_name: this.state.person_name,
-      business_name: this.state.business_name,
-      business_gst_number: this.state.business_gst_number
+      productName: this.state.productName,
+      productModel: this.state.productModel,
+      productSN: this.state.productSN,
+      rate: this.state.rate,
+      tax: this.state.tax
     };
     axios.post('http://localhost:4000/business/update/'+this.props.match.params.id, obj)
-        .then(res => console.log(res.data));
+        .then(res => this.props.history.push('/index'));
     
-    this.props.history.push('/index');
+    //this.props.history.push('/index');
   }
  
   render() {
@@ -63,34 +83,51 @@ export default class Edit extends Component {
         <div style={{ marginTop: 10 }}>
             <h3 align="center">Update Business</h3>
             <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                    <label>Person Name:  </label>
+            <div className="form-group">
+                    <label>Product Name:  </label>
                     <input 
                       type="text" 
                       className="form-control" 
-                      value={this.state.person_name}
-                      onChange={this.onChangePersonName}
+                      value={this.state.productName}
+                      onChange={this.onChangeProductName}
                       />
                 </div>
                 <div className="form-group">
-                    <label>Business Name: </label>
+                    <label>Product Model: </label>
                     <input type="text" 
                       className="form-control"
-                      value={this.state.business_name}
-                      onChange={this.onChangeBusinessName}
+                      value={this.state.productModel}
+                      onChange={this.onChangeProductModel}
                       />
                 </div>
                 <div className="form-group">
-                    <label>GST Number: </label>
+                    <label>Product S/N: </label>
                     <input type="text" 
                       className="form-control"
-                      value={this.state.business_gst_number}
-                      onChange={this.onChangeGstNumber}
+                      value={this.state.productSN}
+                      onChange={this.onChangeProductSN}
+                      />
+                </div>
+                <div className="form-group">
+                    <label>Rate:  </label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={this.state.rate}
+                      onChange={this.onChangeRate}
+                      />
+                </div>
+                <div className="form-group">
+                    <label>Tax: </label>
+                    <input type="text" 
+                      className="form-control"
+                      value={this.state.tax}
+                      onChange={this.onChangeTax}
                       />
                 </div>
                 <div className="form-group">
                     <input type="submit" 
-                      value="Update Business" 
+                      value="Update Product" 
                       className="btn btn-primary"/>
                 </div>
             </form>
