@@ -4,110 +4,54 @@ const express = require('express');
 const businessRoutes = express.Router();
 const fs = require('fs');
 const AWS = require('aws-sdk');
+const config = require('./config/config.js');
+const productService = require('./service/product.service.js')
 
-const s3 = new AWS.S3({
-    accessKeyId: 'AKIAJ4ROXT4FQYFFB7LQ',
-    secretAccessKey: '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'
+const params = {
+  Bucket: config.bucketname,
+  Key: config.key
+}
+
+// add product route
+businessRoutes.route('/add').post((req, res) => {
+  let obj = req.body;
+  productService.addProduct(params, obj, (err, data) => {
+      if(err){
+        res.send(err);
+      }
+      else{
+        res.send(data);
+      }
+  });
 });
 
-const bucketName = 'productdetailsinfo';
-const key = 'productinfo.json';
-
-// Defined store route
-businessRoutes.route('/add').post(function (req, res) {
- 
-  var obj = req.body;
-  const params = {
-    Bucket: bucketName,
-    Key: key
-  }
-  s3.headObject(params, function(err, data){
-    if(err){
-      console.log('file not found ');
+// list product route
+businessRoutes.route('/').get((req, res) => {
+  productService.listProduct(params, (err, data) =>{
+    if (err) {
+      res.send(err.message);
     }
     else{
-      console.log('file found ');
-      s3.getObject(params, (err, data) => {
-        if (err) {
-            console.log(err)
-        }
-        else{
-            console.log('download starting....');
-            var productData = JSON.parse(data.Body.toString());
-            var lastArray = productData.slice(-1)[0];
-            var lastId = lastArray.id;
-            obj.id = lastId + 1;
-            productData.push(obj);
-            const uploadparams = {
-              Bucket: bucketName, // pass your bucket name
-              Key: key, // file will be saved as testBucket/contacts.csv
-              Body: JSON.stringify(productData)
-            };
-            s3.upload(uploadparams, function(s3Err, data) {
-                if (s3Err){
-                    console.log('err ' ,  s3Err);
-                }
-                else{
-                  console.log('successfully upload data');
-                  res.send(data);
-                }
-                
-            });
-        }
-      })
+      res.status(200).json(data);
     }
   })
-});
-
-// Defined get data(index or listing) route
-businessRoutes.route('/').get(function (req, res) {
-  var params = {
-    Bucket: bucketName,
-    Key: key
-}
-s3.getObject(params, (err, data) => {
-    if (err) {
-        console.log("Error details: " , err)
-    }
-    else{
-        console.log('file downloading...');
-        var productData = JSON.parse(data.Body.toString());
-        res.json(productData);
-    }
+    
 })
 
-
-});
-
-// Defined edit route
+// edit product route
 businessRoutes.route('/edit/:id').get(function (req, res) {
   let id = req.params.id;
-  const params = {
-    Bucket: bucketName,
-    Key: key
-  }
-  s3.headObject(params, function(err, data){
+  productService.editProduct(params, id, (err, data) => {
     if(err){
-      console.log('file not found!!!');
+      res.send(err);
     }
     else{
-      console.log('file found!!');
-      s3.getObject(params, (err, data) => {
-        if (err) {
-            console.log(err)
-        }
-        else{
-            console.log('file downloading...');
-            var productData = JSON.parse(data.Body.toString());
-            var singleVal = productData.find(x => x.id == id);
-            res.json(singleVal);
-        }
-      })
+      res.status(200).json(data);
     }
-  })
+  });
 });
 
-//  Defined update route
+// update product route
 businessRoutes.route('/update/:id').post(function (req, res) {
   let id = req.params.id;
   var product = {};
@@ -117,89 +61,26 @@ businessRoutes.route('/update/:id').post(function (req, res) {
   product.rate = req.body.rate;
   product.tax = req.body.tax;
   product.id = id;
-  
-  const params = {
-    Bucket: bucketName,
-    Key: key
-  }
-  
-  s3.getObject(params, (err, data) => {
+  productService.updateProduct(params, product, id, (err, data) => {
     if (err) {
-        console.log(err)
+      res.send(err);
     }
     else{
-        console.log('file downloading...');
-        var productData = JSON.parse(data.Body.toString());
-        var foundIndex = productData.findIndex(x => x.id == id);
-        productData[foundIndex] = product;
-        const uploadparams = {
-          Bucket: bucketName, // pass your bucket name
-          Key: key, // file will be saved as testBucket/contacts.csv
-          Body: JSON.stringify(productData)
-        };
-        s3.upload(uploadparams, function(s3Err, data) {
-          if (s3Err){
-              console.log('err ' ,  s3Err);
-          }
-          else{
-            console.log('successfully upload data');
-            res.send(data);
-          }
-          
-        });
+      res.send(data);
     }
   })
   
-  /*Business.findById(req.params.id, function(err, business) {
-    if (!business)
-      res.status(404).send("data is not found");
-    else {
-        business.person_name = req.body.person_name;
-        business.business_name = req.body.business_name;
-        business.business_gst_number = req.body.business_gst_number;
-
-        business.save().then(business => {
-          res.json('Update complete');
-        })
-        .catch(err => {
-          res.status(400).send("unable to update the database");
-        });
-    }
-  });*/
-
 });
 
-// Defined delete | remove | destroy route
+// delete product route
 businessRoutes.route('/delete/:id').get(function (req, res) {
-  let valueToRemoveId = req.params.id;
-  const params = {
-    Bucket: bucketName,
-    Key: key
-  }
-  s3.getObject(params, (err, data) => {
-    if (err) {
-        console.log(err)
+  let id = req.params.id;
+  productService.deleteProduct(params, id, (err, data) => {
+    if(err){
+      res.send(err);
     }
     else{
-        console.log('file downloading...');
-        var productData = JSON.parse(data.Body.toString());
-        var filteredItems = productData.filter(item => item.id != valueToRemoveId)
-        const uploadparams = {
-          Bucket: bucketName, // pass your bucket name
-          Key: key, // file will be saved as testBucket/contacts.csv
-          Body: JSON.stringify(filteredItems)
-        };
-        s3.upload(uploadparams, function(s3Err, data) {
-          if (s3Err){
-              res.send(s3Err)
-          }
-          else{
-            console.log('successfully upload data');
-            res.send(s3Err);
-            //res.status(200).send("Data deleted successfully");
-          }
-          
-        });
+      res.send(data);
     }
   })
 });
