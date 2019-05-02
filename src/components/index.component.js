@@ -7,71 +7,11 @@ export default class Index extends Component {
   constructor(props) {
       super(props);
       this.state = {business:[]};
-      /*this.state = {business: [{
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      },
-      {
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      },
-      {
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      },
-      {
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      },
-      {
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      },
-      {
-        "productName":"Sony pendrive",
-        "productModel":"128GB",
-         "productSN":"12345678",
-         "hns":"12de32222",
-         "quantity":"1",
-         "rate":"120",
-         "tax":"18",
-         "amount":"120"
-      }]};*/
     }
     
     componentDidMount(){
       axios.get('http://localhost:4000/business')
-        .then(response => {
+        .then(response => {          
           this.setState({ business: response.data });
         })
         .catch(function (error) {
